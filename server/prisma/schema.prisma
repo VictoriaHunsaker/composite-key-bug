@@ -1,0 +1,27 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ExampleRelation {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  isExample Boolean   @default(false)
+  example   Example[]
+}
+
+model Example {
+  id                String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String          @db.Uuid
+  exampleRelationId String          @db.Uuid
+  exampleRelation   ExampleRelation @relation(fields: [exampleRelationId], references: [id])
+  field             String?
+  otherField        String?
+
+  @@unique([tenantId, id])
+}

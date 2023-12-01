@@ -1,0 +1,28 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: composite_bug
+      POSTGRES_USER: composite_bug
+      POSTGRES_PASSWORD: composite_bug
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5551:5432
+    restart: unless-stopped
+  server:
+    build: ./server
+    ports:
+      - 9099:9099
+    volumes:
+      - ./server/src:/app/src
+      - ./server/tsconfig.json:/app/tsconfig.json
+    environment:
+      - PORT=9099
+      - DATABASE_URL=postgresql://composite_bug:composite_bug@postgres:5432/composite_bug?schema=public
+      - DEBUG=prisma*
+
+volumes:
+  postgres:
+    external: false
