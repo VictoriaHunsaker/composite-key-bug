@@ -20,7 +20,7 @@ app.use(cors());
 app.get(
   "/example",
   async (_req: Request, res: Response) => {
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient({ log: ['query'] });
     
   // @ts-ignore
   prisma.$on('query', e => {
@@ -49,6 +49,15 @@ app.get(
       where: {
         tenantId_id: {
           id: exampleIds[1],
+          tenantId,
+        },
+        tenantId,
+      }
+    }),
+    prisma.example.findUnique({
+      where: {
+        tenantId_id: {
+          id: exampleIds[2],
           tenantId,
         },
         tenantId,
